@@ -23,6 +23,10 @@ config/icon="res://Art/icon.png"
 
 Global="*res://Scripts/Global.gd"
 
+[display]
+
+window/stretch/mode="viewport"
+
 [input]
 
 jump={
@@ -61,7 +65,9 @@ restart={
 2d_physics/layer_1="Player"
 2d_physics/layer_2="Ground"
 2d_physics/layer_3="SpecialGround"
+2d_physics/layer_4="Finish"
 
 [rendering]
 
+environment/default_clear_color=Color( 0.0588235, 0.0196078, 0.176471, 1 )
 environment/default_environment="res://default_env.tres"

@@ -1,10 +1,9 @@
 extends KinematicBody2D
 
-var gravity := 4000.0
 var velocity := Vector2.ZERO
-var jump_force := 1000
-var acceleration := 1500
-var max_speed := 500
+var jump_force := 500
+var acceleration := 1000
+var max_speed := 300
 var friction := 0.9
 
 var top := []
@@ -27,7 +26,7 @@ var printCounter := 0.0
 var printTime := 2.0
 
 func _ready():
-	velocity.y = gravity
+	velocity.y = jump_force
 	
 func _process(delta):
 	if Input.is_action_just_pressed('restart'):
@@ -35,7 +34,7 @@ func _process(delta):
 	
 	var input_vector = Vector2.ZERO
 	
-	if len(bottom) or len(top):
+	if bottom or top:
 		input_vector.x = Input.get_action_strength('move_right') - Input.get_action_strength('move_left')
 		
 		if input_vector != Vector2.ZERO:
@@ -46,10 +45,9 @@ func _process(delta):
 			if velocity.x < -max_speed:
 				velocity.x = -max_speed
 		else:
-			print('slow Hor')
 			velocity.x *= friction
 		
-	if len(left) or len(right):
+	if left or right:
 		input_vector.y = Input.get_action_strength('move_down') - Input.get_action_strength('move_up')
 		
 		if input_vector != Vector2.ZERO:
@@ -60,18 +58,21 @@ func _process(delta):
 			if velocity.y < -max_speed:
 				velocity.y = -max_speed
 		else:
-			print('slow ver')
 			velocity.y *= friction
 
 	if Input.is_action_just_pressed('jump'):
 		if bottom:
+			velocity.x = 0
 			velocity.y = -jump_force
 		if top:
+			velocity.x = 0
 			velocity.y = jump_force
 		if left:
 			velocity.x = jump_force
+			velocity.y = 0
 		if right: 
 			velocity.x = -jump_force
+			velocity.y = 0
 	
 	velocity = self.move_and_slide(velocity, Vector2(0, -1))
 	
@@ -79,12 +80,14 @@ func _process(delta):
 
 
 func _on_Right_body_entered(body):
+	print(body)
 	right.append(body)
 
 func _on_Right_body_exited(body):
 	right.erase(body)
 
 func _on_Left_body_entered(body):
+	print(body)
 	left.append(body)
 
 func _on_Left_body_exited(body):
