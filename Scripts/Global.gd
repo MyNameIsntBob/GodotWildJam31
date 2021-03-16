@@ -9,7 +9,9 @@ var levels = [
 	'res://Scenes/Space.tscn',
 	'res://Scenes/Level1.tscn',
 	'res://Scenes/RoundAndRound.tscn',
-	'res://Scenes/Key.tscn'
+	'res://Scenes/Key.tscn',
+	'res://Scenes/FirstKey.tscn',
+	'res://Scenes/Snake.tscn'
 ]
 
 func add_key():
