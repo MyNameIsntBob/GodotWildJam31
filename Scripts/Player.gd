@@ -6,10 +6,14 @@ var acceleration := 1000
 var max_speed := 300
 var friction := 0.9
 
+var priority := ''
+
 var top := []
 var left := []
 var right := []
 var bottom := []
+
+var doorbit = 5
 
 #var jumping := false
 #var jumpTime := 0.25
@@ -22,13 +26,12 @@ var bottom := []
 #var cancelJumpCounter := 0.0
 #var jumpAgain := false
 
-var printCounter := 0.0
-var printTime := 2.0
-
 func _ready():
 	velocity.y = jump_force
-	
 func _process(delta):
+	
+	set_collision_mask_bit(doorbit, !Global.keys)
+	
 	if Input.is_action_just_pressed('restart'):
 		Global.load_level()
 	
@@ -61,18 +64,33 @@ func _process(delta):
 			velocity.y *= friction
 
 	if Input.is_action_just_pressed('jump'):
-		if bottom:
-			velocity.x = 0
-			velocity.y = -jump_force
-		if top:
-			velocity.x = 0
-			velocity.y = jump_force
-		if left:
-			velocity.x = jump_force
-			velocity.y = 0
-		if right: 
-			velocity.x = -jump_force
-			velocity.y = 0
+		if priority:
+			if priority == 'bottom':
+				velocity.x = 0
+				velocity.y = -jump_force
+			if priority == 'top':
+				velocity.x = 0
+				velocity.y = jump_force
+			if priority == 'left':
+				velocity.x = jump_force
+				velocity.y = 0
+			if priority == 'right': 
+				velocity.x = -jump_force
+				velocity.y = 0
+				
+		else: 
+			if bottom:
+				velocity.x = 0
+				velocity.y = -jump_force
+			if top:
+				velocity.x = 0
+				velocity.y = jump_force
+			if left:
+				velocity.x = jump_force
+				velocity.y = 0
+			if right: 
+				velocity.x = -jump_force
+				velocity.y = 0
 	
 	velocity = self.move_and_slide(velocity, Vector2(0, -1))
 	
@@ -80,27 +98,50 @@ func _process(delta):
 
 
 func _on_Right_body_entered(body):
-	print(body)
+	if (!left and !top and !bottom):
+		priority = 'right'
+		
 	right.append(body)
 
 func _on_Right_body_exited(body):
 	right.erase(body)
+	
+	if priority == 'right' and !right:
+		priority = ''
+	
 
 func _on_Left_body_entered(body):
-	print(body)
+	if (!right and !top and !bottom):
+		priority = 'left'
+	
 	left.append(body)
 
 func _on_Left_body_exited(body):
 	left.erase(body)
+	
+	if priority == 'left' and !left:
+		priority = ''
 
 func _on_Top_body_entered(body):
+	if (!right and !left and !bottom):
+		priority = 'top'
+		
 	top.append(body)
 
 func _on_Top_body_exited(body):
 	top.erase(body)
+	
+	if priority == 'top' and !top:
+		priority = ''
 
 func _on_Bottom_body_entered(body):
+	if (!right and !top and !left):
+		priority = 'bottom'
+	
 	bottom.append(body)
 
 func _on_Bottom_body_exited(body):
 	bottom.erase(body)
+	
+	if priority == 'bottom' and !bottom:
+		priority = ''
